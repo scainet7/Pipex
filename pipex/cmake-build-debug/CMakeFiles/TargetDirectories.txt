@@ -1,0 +1,3 @@
+C:/Users/Snino/CLionProjects/pipex/cmake-build-debug/CMakeFiles/pipex.dir
+C:/Users/Snino/CLionProjects/pipex/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Snino/CLionProjects/pipex/cmake-build-debug/CMakeFiles/rebuild_cache.dir
