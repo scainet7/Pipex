@@ -2,40 +2,43 @@
 
 void fd_error(char *s)
 {
-	printf("%s",s);
+	ft_putstr_fd(s,2);
 	exit(EXIT_FAILURE);
 }
-/*
-char fd_error(char *s)
+
+/*void fd_parent(int argc, char **argv, char **envp, int *pipe_fd)
 {
 
 }
 
-int fd_parent()
-{
-
-}
-
-int fd_child()
+void fd_descendant(int argc, char **argv, char **envp, int *pipe_fd)
 {
 
 }
 */
 int main(int argc, char **argv, char **envp)
 {
+	//t_parametrs params;
     if (argc != 5)
     {
     	if (argc < 5)
-    		fd_error("\033[31m ERROR_MANY_ARGUMENTS\0m\n");
+    		fd_error(RED" ERROR_MANY_ARGUMENTS"END);
     	else
-    		fd_error("\033[31m ERROR_MORE_ARGUMENTS\0m\n");
+    		fd_error(RED"ERROR_MORE_ARGUMENTS"END);
     }
-    if (envp != 0)
-		fd_error("\033[31m ERROR\0m\n");
-    /*int proc;
-    pid_t file[2];
-    if (proc == 0)
-        fd_child(argc, *argv, envp, file[2]);
-    fd_parent();*/
+    if (envp == 0)
+		fd_error(RED"ERROR_ENVP"END);
+	int pid;
+	pid = fork();
+	if (pid < 0)
+		fd_error(RED"ERROR_FORK"END);
+	if (pid == 0)
+	{
+		printf("%d\n", argc);
+		printf("%s\n", argv[0]);
+	}
+		//fd_descendant(argc, argv, envp, params.pipe_fd);
+	//fd_parent(argc, argv, envp, params.pipe_fd);
+
     return 0;
 }
