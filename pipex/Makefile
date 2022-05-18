@@ -10,25 +10,25 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME := pipex
+NAME:= pipex
 
-CC := gcc
+CC:= gcc
 
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS:= -Wall -Wextra -Werror
 
-LIBFT_A = libft.a
+LIBFT_A:= libft.a
 
-LIBF_DIR = libft/
+LIBF_DIR:= libft/
 
-LIBFT  = $(addprefix $(LIBF_DIR), $(LIBFT_A))
+LIBFT:= $(addprefix $(LIBF_DIR), $(LIBFT_A))
 
-SRCS := pipex.c
+SRCS:= 	pipex.c ft_check_and_error.c
 
-HEADER		:= pipex.h
+HEADER:= pipex.h
 
 OBJ := $(SRCS:%.c=%.o)
 
-all : $(NAME)
+all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -C $(LIBF_DIR)

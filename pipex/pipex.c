@@ -12,71 +12,93 @@
 
 #include "pipex.h"
 
-void ft_error(char *s)
+char *ft_find_path(char **envp)
 {
-	ft_putstr_fd(s,2);
-	exit(EXIT_FAILURE);
+	char	**arg;
+	int 		i;
+
+	i = 0;
+	while (envp[i])
+	{
+		if (ft_strnstr(envp[i], "PATH=", 5))
+		{
+			arg = ft_split(envp[i] + 5, ':');
+			if (!arg)
+				ft_error(RED"ERROR"END);
+			return (*arg);
+		}
+		i++;
+	}
+	return (NULL);
 }
 
-void check_fd(char **argv, t_parametrs params)
+char *ft_cmd(t_parametrs *params)
 {
-    if (access(argv[1], F_OK))
-        ft_error(RED"ERROR_INFILE_DOES_NOT_EXIST"END);
-    else if (access(argv[1], R_OK) != 0)
-        ft_error(RED"ERROR_INFILE_READ"END);
-    params.infile = open(argv[1], O_RDONLY);
-    if (access(argv[4], F_OK))
-        params.outfile = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0644);
-    else if (access(argv[4], W_OK)
-        ft_error(RED"ERROR_OUTFILE_READ"END);
-    params.outfile = open(argv[4], O_RDWR | O_TRUNC);
+	char	*tmp;
+	char	*line;
+	int		i;
+
+	i = 0;
+	while (params->paths[i])
+	{
+		tmp = ft_strjoin(&params->paths[i], "/");
+		line = ft_strjoin(tmp, *params->cmd_paths);
+		free(tmp);
+		if (access(line, F_OK) == 0)
+			return (line);
+		else
+			free(line);
+		i++;
+	}
+	return (NULL);
 }
 
-void ft_first_cmd(char *argv, char **envp)
+void ft_parent(char **argv, char **envp, t_parametrs *params)
 {
-
+	dup2(params->infile, 0);
+	dup2(params->pipe_fd[1], 1);
+	params->cmd_paths = ft_split(argv[2], ' ');
+	params->paths = ft_find_path(envp);
+	params->line = ft_cmd(params);
+	close(params->infile);
+	close(params->pipe_fd[1]);
+	execve(*params->cmd_paths, &params->paths, &params->line);
 }
-/*void fd_parent(int argc, char **argv, char **envp, t_parametrs params)
-{
 
-}
-*/
-void fd_descendant(char **argv, char **envp, t_parametrs params)
-{
-    dup2(params.infile, 0);
-    dup2(params.pipe_fd[1], 1);
-    params.cmd_paths = ft_split(argv[2], ' ');
-    params.paths = find_path(envp);
 
-	else if (dup2(params.pipe_fd[0], 0) < 0 || dup2(params.pid_first, 1) < 0
-	   || close(params.pid_first) < 0 || close(params.pipe_fd[0]) < 0
-	   || close(params.pipe_fd[1]) < 0)
-		ft_error(RED"ERROR_DUP2"END);
-	printf(GREEN"%s"END, envp[1]);
-	ft_first_cmd(argv[3], envp);
+void ft_descendant(char **argv, char **envp, t_parametrs *params)
+{
+	dup2(params->infile, 0);
+	dup2(params->pipe_fd[1], 1);
+	params->cmd_paths = ft_split(argv[2], ' ');
+	params->paths = ft_find_path(envp);
+	params->line = ft_cmd(params);
+	close(params->infile);
+	close(params->pipe_fd[1]);
+	execve(*params->cmd_paths, &params->paths, &params->line);
 }
 
 int main(int argc, char **argv, char **envp)
 {
 	t_parametrs params;
-    if (argc != 5)
-    {
-    	if (argc < 5)
-    		ft_error(RED" ERROR_MANY_ARGUMENTS"END);
-    	else
-    		ft_error(RED"ERROR_MORE_ARGUMENTS"END);
-    }
-    if (envp == 0)
+	if (argc != 5)
+	{
+		if (argc < 5)
+			ft_error(RED"ERROR_MANY_ARGUMENTS"END);
+		else
+			ft_error(RED"ERROR_MORE_ARGUMENTS"END);
+	}
+	if (envp == 0)
 		ft_error(RED"ERROR_ENVP"END);
-    check_fd(argv, params);
-    if (pipe(params.pipe_fd) < 0)
-        ft_error(RED"ERROR_PIPE"END);
+	ft_check_fd(argv, &params);
+	if (pipe(params.pipe_fd) < 0)
+		ft_error(RED"ERROR_PIPE"END);
 	params.pid_first = fork();
 	if (params.pid_first < 0)
 		ft_error(RED"ERROR_FORK"END);
 	if (params.pid_first == 0)
-		fd_descendant(argv, envp, params);
-	//fd_parent(argc, argv, envp, params);
+		ft_descendant(argv, envp, &params);
+	ft_parent(argv, envp, &params);
 
-    return 0;
+	return 0;
 }

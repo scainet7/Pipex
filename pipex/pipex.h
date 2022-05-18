@@ -27,6 +27,7 @@
 
 typedef struct s_parametrs
 {
+	char *line;
 	char *paths;
 	char **cmd_paths;
 	pid_t pid_first;
@@ -36,7 +37,10 @@ typedef struct s_parametrs
 	int outfile;
 } t_parametrs;
 
-void fd_descendant(char **argv, char **envp, t_parametrs params);
+void ft_descendant(char **argv, char **envp, t_parametrs *params);
+void ft_parent(char **argv, char **envp, t_parametrs *params);
+void ft_check_fd(char **argv, t_parametrs *params);
 void ft_error(char *s);
-void ft_first_cmd(char *argv, char **envp);
+char *ft_find_path(char **envp);
+char *ft_cmd(t_parametrs *params);
 #endif //PIPEX_H
