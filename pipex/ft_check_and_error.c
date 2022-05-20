@@ -20,7 +20,7 @@ void ft_check_fd(char **argv, t_parametrs *params)
 	else
 	{
 		unlink(argv[4]);
-		params->outfile = open(argv[4], O_RDWR | O_TRUNC);
+		params->outfile = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0644);
 	}
 }
 

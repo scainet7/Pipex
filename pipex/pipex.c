@@ -55,13 +55,13 @@ char *ft_cmd(t_parametrs *params)
 
 void ft_parent(char **argv, char **envp, t_parametrs *params)
 {
-	dup2(params->infile, 0);
-	dup2(params->pipe_fd[1], 1);
-	params->cmd_paths = ft_split(argv[2], ' ');
+	dup2(params->outfile, 1);
+	dup2(params->pipe_fd[0], 0);
+	params->cmd_paths = ft_split(argv[3], ' ');
 	params->paths = ft_find_path(envp);
 	params->line = ft_cmd(params);
-	close(params->infile);
-	close(params->pipe_fd[1]);
+	close(params->outfile);
+	close(params->pipe_fd[0]);
 	execve(*params->cmd_paths, &params->paths, &params->line);
 }
 
@@ -98,7 +98,17 @@ int main(int argc, char **argv, char **envp)
 		ft_error(RED"ERROR_FORK"END);
 	if (params.pid_first == 0)
 		ft_descendant(argv, envp, &params);
-	ft_parent(argv, envp, &params);
+	params.pid_first = fork();
+	if (params.pid_first < 0)
+		ft_error(RED"ERROR_FORK"END);
+	if (params.pid_first == 0)
+		ft_parent(argv, envp, &params);
+	close(params.infile);
+	close(params.outfile);
+	close(params.pipe_fd[0]);
+	close(params.pipe_fd[1]);
+	wait(0);
+	wait(0);
 
 	return 0;
 }
