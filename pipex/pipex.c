@@ -12,103 +12,74 @@
 
 #include "pipex.h"
 
-char *ft_find_path(char **envp)
+void ft_error(char *s)
 {
-	char	**arg;
-	int 		i;
-
-	i = 0;
-	while (envp[i])
-	{
-		if (ft_strnstr(envp[i], "PATH=", 5))
-		{
-			arg = ft_split(envp[i] + 5, ':');
-			if (!arg)
-				ft_error(RED"ERROR"END);
-			return (*arg);
-		}
-		i++;
-	}
-	return (NULL);
+	ft_putstr_fd(s,2);
+	exit(EXIT_FAILURE);
 }
 
-char *ft_cmd(t_parametrs *params)
-{
-	char	*tmp;
-	char	*line;
-	int		i;
-
-	i = 0;
-	while (params->paths[i])
-	{
-		tmp = ft_strjoin(&params->paths[i], "/");
-		line = ft_strjoin(tmp, *params->cmd_paths);
-		free(tmp);
-		if (access(line, F_OK) == 0)
-			return (line);
-		else
-			free(line);
-		i++;
-	}
-	return (NULL);
-}
-
-void ft_parent(char **argv, char **envp, t_parametrs *params)
-{
-	dup2(params->outfile, 1);
-	dup2(params->pipe_fd[0], 0);
-	params->cmd_paths = ft_split(argv[3], ' ');
-	params->paths = ft_find_path(envp);
-	params->line = ft_cmd(params);
-	close(params->outfile);
-	close(params->pipe_fd[0]);
-	execve(*params->cmd_paths, &params->paths, &params->line);
-}
-
-
-void ft_descendant(char **argv, char **envp, t_parametrs *params)
+static void ft_descendant_1(t_parametrs *params)
 {
 	dup2(params->infile, 0);
 	dup2(params->pipe_fd[1], 1);
-	params->cmd_paths = ft_split(argv[2], ' ');
-	params->paths = ft_find_path(envp);
-	params->line = ft_cmd(params);
 	close(params->infile);
+	close(params->outfile);
+	close(params->pipe_fd[0]);
 	close(params->pipe_fd[1]);
-	execve(*params->cmd_paths, &params->paths, &params->line);
+	execve(params->cmd_first[0], params->cmd_first, NULL);
+	ft_error(RED"ERROR_EXECVE"END);
+	exit(127);
+}
+
+static void ft_descendant_2(t_parametrs *params)
+{
+	dup2(params->outfile, 1);
+	dup2(params->pipe_fd[0], 0);
+	close(params->infile);
+	close(params->outfile);
+	close(params->pipe_fd[0]);
+	close(params->pipe_fd[1]);
+	execve(params->cmd_second[0], params->cmd_second, NULL);
+	ft_error(RED"ERROR_EXECVE"END);
+	exit(127);
+}
+
+static void ft_fork(t_parametrs *params)
+{
+	int pid[2];
+	int status[2];
+
+	pid[0] = fork();
+	if (pid[0] < 0)
+		ft_error(RED"ERROR_FORK"END);
+	if (pid[0] == 0)
+		ft_descendant_1(params);
+	pid[1] = fork();
+	if (pid[1] < 0)
+		ft_error(RED"ERROR_FORK"END);
+	if (pid[1] == 0)
+		ft_descendant_2(params);
+	close(params->infile);
+	close(params->outfile);
+	close(params->pipe_fd[0]);
+	close(params->pipe_fd[1]);
+	waitpid(pid[0], &status[0], 0);
+	waitpid(pid[1], &status[1], 0);
 }
 
 int main(int argc, char **argv, char **envp)
 {
-	t_parametrs params;
-	if (argc != 5)
-	{
-		if (argc < 5)
-			ft_error(RED"ERROR_MANY_ARGUMENTS"END);
-		else
-			ft_error(RED"ERROR_MORE_ARGUMENTS"END);
-	}
-	if (envp == 0)
-		ft_error(RED"ERROR_ENVP"END);
-	ft_check_fd(argv, &params);
-	if (pipe(params.pipe_fd) < 0)
-		ft_error(RED"ERROR_PIPE"END);
-	params.pid_first = fork();
-	if (params.pid_first < 0)
-		ft_error(RED"ERROR_FORK"END);
-	if (params.pid_first == 0)
-		ft_descendant(argv, envp, &params);
-	params.pid_first = fork();
-	if (params.pid_first < 0)
-		ft_error(RED"ERROR_FORK"END);
-	if (params.pid_first == 0)
-		ft_parent(argv, envp, &params);
-	close(params.infile);
-	close(params.outfile);
-	close(params.pipe_fd[0]);
-	close(params.pipe_fd[1]);
-	wait(0);
-	wait(0);
+	t_parametrs *params;
 
+	params = (t_parametrs *) malloc(sizeof (t_parametrs));
+	if (!params)
+		ft_error(RED"ERROR_MALLOC_STRUCT"END);
+	ft_check_args(argc, argv, envp, params);
+	if (pipe(params->pipe_fd) < 0)
+		ft_error(RED"ERROR_PIPE"END);
+	ft_fork(params);
+	ft_free_split(params->cmd_first);
+	ft_free_split(params->cmd_second);
+	free(params);
 	return 0;
 }

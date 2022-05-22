@@ -22,7 +22,7 @@ LIBF_DIR:= libft/
 
 LIBFT:= $(addprefix $(LIBF_DIR), $(LIBFT_A))
 
-SRCS:= 	pipex.c ft_check_and_error.c
+SRCS:= 	pipex.c ft_check_and_error_and_pars.c
 
 HEADER:= pipex.h
 
