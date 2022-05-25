@@ -24,15 +24,13 @@ SRC	:=	ft_isalnum.c			ft_isprint.c		ft_memcmp.c\
 		ft_isascii.c			ft_striteri.c		ft_memmove.c\
 		ft_putnbr_fd.c			ft_strdup.c			ft_strlen.c\
 		ft_strrchr.c			ft_toupper.c		ft_calloc.c\
-		ft_isdigit.c			ft_memchr.c			ft_memset.c\
-		ft_putstr_fd.c  		ft_strjoin.c		ft_strstr.c\
-		ft_strmapi.c			ft_strtrim.c		ft_lstnew.c\
-		ft_lstadd_front.c		ft_lstsize.c	 	ft_lstlast.c\
-		ft_lstadd_back.c		ft_lstdelone.c	 	ft_lstclear.c\
-		ft_lstiter.c			ft_lstmap.c			ft_strcmp.c\
-		ft_free_split.c
+		ft_isdigit.c			ft_memset.c			ft_putstr_fd.c\
+		ft_strjoin.c			ft_strstr.c			ft_strmapi.c\
+		ft_strtrim.c			ft_strcmp.c			ft_free_split.c
 
 OBJ	:=	$(SRC:%.c=%.o)
+
+.PHONY	:	all claen fclean re
 
 all:	$(NAME)
 

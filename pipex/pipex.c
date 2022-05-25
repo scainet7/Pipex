@@ -12,13 +12,13 @@
 
 #include "pipex.h"
 
-void ft_error(char *s)
+void	ft_error(char *s)
 {
-	ft_putstr_fd(s,2);
+	ft_putstr_fd(s, 3);
 	exit(EXIT_FAILURE);
 }
 
-static void ft_descendant_1(t_parametrs *params)
+static void	ft_descendant_1(t_parametrs *params)
 {
 	dup2(params->infile, 0);
 	dup2(params->pipe_fd[1], 1);
@@ -31,7 +31,7 @@ static void ft_descendant_1(t_parametrs *params)
 	exit(127);
 }
 
-static void ft_descendant_2(t_parametrs *params)
+static void	ft_descendant_2(t_parametrs *params)
 {
 	dup2(params->outfile, 1);
 	dup2(params->pipe_fd[0], 0);
@@ -44,19 +44,19 @@ static void ft_descendant_2(t_parametrs *params)
 	exit(127);
 }
 
-static void ft_fork(t_parametrs *params)
+static void	ft_fork(t_parametrs *params)
 {
-	int pid[2];
-	int status[2];
+	int	pid[2];
+	int	status[2];
 
 	pid[0] = fork();
 	if (pid[0] < 0)
-		ft_error(RED"ERROR_FORK"END);
+		ft_error(RED"ERROR_FORK_1"END);
 	if (pid[0] == 0)
 		ft_descendant_1(params);
 	pid[1] = fork();
 	if (pid[1] < 0)
-		ft_error(RED"ERROR_FORK"END);
+		ft_error(RED"ERROR_FORK_2"END);
 	if (pid[1] == 0)
 		ft_descendant_2(params);
 	close(params->infile);
@@ -67,9 +67,9 @@ static void ft_fork(t_parametrs *params)
 	waitpid(pid[1], &status[1], 0);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	t_parametrs *params;
+	t_parametrs	*params;
 
 	params = (t_parametrs *) malloc(sizeof (t_parametrs));
 	if (!params)
@@ -81,5 +81,5 @@ int main(int argc, char **argv, char **envp)
 	ft_free_split(params->cmd_first);
 	ft_free_split(params->cmd_second);
 	free(params);
-	return 0;
+	return (0);
 }
