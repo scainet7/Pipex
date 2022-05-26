@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: snino <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/15 17:27:42 by snino             #+#    #+#             */
-/*   Updated: 2022/05/15 17:27:49 by snino            ###   ########.fr       */
+/*   Created: 2021/10/31 13:50:26 by snino             #+#    #+#             */
+/*   Updated: 2021/10/31 14:08:43 by snino            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_strcmp(const char *s1, const char *s2)
+#include "libft.h"
+
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
-	while (*s1 || *s2)
+	t_list	*i;
+	t_list	*new;
+
+	i = NULL;
+	while (lst)
 	{
-		if (*s1 != *s2)
-			return ((unsigned char)*s1 - (unsigned char)*s2);
-		s1++;
-		s2++;
+		new = ft_lstnew(f(lst -> content));
+		if (!new)
+		{
+			ft_lstclear(&i, del);
+			return (i);
+		}
+		ft_lstadd_back(&i, new);
+		lst = lst -> next;
 	}
-	return (0);
+	return (i);
 }
