@@ -12,6 +12,7 @@
 
 #ifndef LIBFT_H
 # define LIBFT_H
+#  define BUFFER_SIZE 30
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
@@ -47,6 +48,7 @@ int		ft_isdigit(int c);
 int		ft_isalnum(int c);
 int		ft_isascii(int c);
 int		ft_isprint(int c);
+int		gnl(int fd, char **line);
 int		ft_strlen(const char *str);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_lstsize(t_list *lst);
@@ -56,6 +58,7 @@ char	*ft_strdup(const char *s1);
 char	*ft_strchr(char *s, int c);
 char	*ft_strrchr(char *s, int c);
 char	**ft_split(char const *s, char c);
+char    *ft_strcpy(char *dst, const char *src);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strstr(const char *haystack, const char *needle);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
