@@ -6,7 +6,7 @@
 #    By: snino <marvin@42.fr>                       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/14 16:23:18 by snino             #+#    #+#              #
-#    Updated: 2021/11/05 18:01:57 by snino            ###   ########.fr        #
+#    Updated: 2022/05/29 13:37:23 by snino            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME := libft.a
@@ -27,7 +27,7 @@ SRC	:=	ft_isalnum.c			ft_isprint.c		ft_memcmp.c\
 		ft_isdigit.c			ft_memchr.c			ft_memset.c\
 		ft_putstr_fd.c  		ft_strjoin.c		ft_strstr.c\
 		ft_strmapi.c			ft_strtrim.c		ft_free_split.c\
-		ft_strcpy.c				gnl.c
+		ft_strcpy.c
 
 BONUS_SRC	:=	ft_lstnew.c				ft_lstadd_front.c	ft_lstsize.c\
 			 	ft_lstlast.c			ft_lstadd_back.c	ft_lstdelone.c\

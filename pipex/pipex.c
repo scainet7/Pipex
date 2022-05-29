@@ -27,7 +27,7 @@ static void	ft_descendant_1(t_parametrs *params, char **envp)
 	close(params->pipe_fd[0]);
 	close(params->pipe_fd[1]);
 	execve(params->cmd_first[0], params->cmd_first, envp);
-	ft_error(RED"ERROR_EXECVE"END);
+	ft_error(RED"ERROR_EXECVE_CMD_1"END);
 	exit(127);
 }
 
@@ -40,14 +40,13 @@ static void	ft_descendant_2(t_parametrs *params, char **envp)
 	close(params->pipe_fd[0]);
 	close(params->pipe_fd[1]);
 	execve(params->cmd_second[0], params->cmd_second, envp);
-	ft_error(RED"ERROR_EXECVE"END);
+	ft_error(RED"ERROR_EXECVE_CMD_2"END);
 	exit(127);
 }
 
 static void	ft_fork(t_parametrs *params, char **envp)
 {
 	int	pid[2];
-	int	status[2];
 
 	pid[0] = fork();
 	if (pid[0] < 0)
@@ -63,8 +62,8 @@ static void	ft_fork(t_parametrs *params, char **envp)
 	close(params->outfile);
 	close(params->pipe_fd[0]);
 	close(params->pipe_fd[1]);
-	waitpid(pid[0], &status[0], 0);
-	waitpid(pid[1], &status[1], 0);
+	wait(0);
+	wait(0);
 }
 
 int	main(int argc, char **argv, char **envp)

@@ -24,7 +24,7 @@ static char	**ft_find_path(char **envp)
 		if (ft_strnstr(envp[i], "PATH=", ft_strlen(envp[i])))
 		{
 			path = ft_split(envp[i] + ft_strlen("PATH="), ':');
-			if (!*path)
+			if (!path)
 				ft_error(RED"ERROR_PATH_SPLIT"END);
 			return (path);
 		}
@@ -32,7 +32,7 @@ static char	**ft_find_path(char **envp)
 	}
 	if (!envp[i])
 		ft_error(RED"ERROR_NO_PATH_IN_ENVP"END);
-	return (NULL);
+	return (path);
 }
 
 static char	*ft_check_cmd(char **path, char *tmp_cmd)
@@ -75,7 +75,7 @@ static char	**ft_find_cmd(char *cmd_string, char **envp)
 	free(tmp);
 	free(tmp_cmd);
 	ft_free_split(path);
-	return (NULL);
+	return (cmd);
 }
 
 void	ft_check_args(int argc, char **argv, char **envp, t_parametrs *params)
